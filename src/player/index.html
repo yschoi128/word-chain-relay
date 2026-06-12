@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>연상 체인 릴레이 — 플레이어</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #eee; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; padding: 16px; }
+    h1 { font-size: 1.4rem; margin-bottom: 12px; text-align: center; }
+    .card { background: #16213e; border-radius: 16px; padding: 20px; width: 100%; max-width: 400px; margin-bottom: 12px; }
+    input { width: 100%; padding: 12px; border-radius: 8px; border: none; font-size: 1rem; margin-bottom: 8px; }
+    button { width: 100%; padding: 12px; border-radius: 8px; border: none; background: #e94560; color: white; font-size: 1rem; font-weight: bold; cursor: pointer; }
+    button:disabled { background: #555; cursor: not-allowed; }
+    .timer { font-size: 2rem; font-weight: bold; text-align: center; color: #e94560; }
+    .start-word { font-size: 1.8rem; font-weight: bold; text-align: center; color: #0f3460; background: #e94560; border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+    .hint-list { list-style: none; }
+    .hint-list li { padding: 6px 0; border-bottom: 1px solid #333; font-size: 1.1rem; }
+    .hint-list li.correct { color: #4ade80; font-weight: bold; }
+    .hint-list li.timeout { color: #888; font-style: italic; }
+    .current-turn { color: #fbbf24; font-weight: bold; }
+    .score { font-size: 1.5rem; text-align: center; font-weight: bold; color: #4ade80; }
+    .hidden { display: none; }
+    .team-info { text-align: center; margin-bottom: 8px; color: #a5b4fc; }
+    .waiting { text-align: center; color: #888; padding: 40px 0; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- Join -->
+    <div id="section-join" class="card">
+      <h1>🔗 연상 체인 릴레이</h1>
+      <input id="input-nickname" placeholder="닉네임 (최대 10자)" maxlength="10" />
+      <button id="btn-join">입장</button>
+    </div>
+
+    <!-- Lobby -->
+    <div id="section-lobby" class="card hidden">
+      <h1>대기 중...</h1>
+      <p class="waiting">잠시 후 팀이 배정됩니다</p>
+      <p id="lobby-count" class="team-info"></p>
+    </div>
+
+    <!-- Team assigned -->
+    <div id="section-team" class="card hidden">
+      <h1>팀 배정 완료!</h1>
+      <p id="team-info" class="team-info"></p>
+      <p id="team-members" style="text-align:center; color:#ccc; margin-top:8px;"></p>
+      <p class="waiting">라운드 시작을 기다리는 중...</p>
+    </div>
+
+    <!-- Round active -->
+    <div id="section-round" class="card hidden">
+      <p id="round-label" class="team-info"></p>
+      <div class="start-word" id="start-word"></div>
+      <ul class="hint-list" id="hint-list"></ul>
+      <p id="turn-info" class="current-turn" style="text-align:center; margin:12px 0;"></p>
+      <div class="timer" id="timer"></div>
+      <input id="input-guess" placeholder="정답 입력" style="margin-top:12px;" />
+      <button id="btn-guess" style="margin-top:4px;">제출</button>
+    </div>
+
+    <!-- Round result -->
+    <div id="section-result" class="card hidden">
+      <h1>라운드 결과</h1>
+      <p id="result-answer" style="text-align:center; font-size:1.2rem; margin-bottom:8px;"></p>
+      <p id="result-score" class="score"></p>
+      <p id="result-total" class="team-info" style="margin-top:8px;"></p>
+      <p class="waiting" style="margin-top:16px;">다음 라운드를 기다리는 중...</p>
+    </div>
+
+    <!-- Final -->
+    <div id="section-final" class="card hidden">
+      <h1>🏆 최종 결과</h1>
+      <div id="final-ranking"></div>
+    </div>
+  </div>
+
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>

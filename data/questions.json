@@ -1,0 +1,22 @@
+[
+  { "startWord": "바다", "targetWord": "소금" },
+  { "startWord": "학교", "targetWord": "시험" },
+  { "startWord": "겨울", "targetWord": "눈사람" },
+  { "startWord": "병원", "targetWord": "주사" },
+  { "startWord": "생일", "targetWord": "케이크" },
+  { "startWord": "공항", "targetWord": "여권" },
+  { "startWord": "도서관", "targetWord": "안경" },
+  { "startWord": "운동장", "targetWord": "호루라기" },
+  { "startWord": "결혼식", "targetWord": "부케" },
+  { "startWord": "캠핑", "targetWord": "텐트" },
+  { "startWord": "피아노", "targetWord": "악보" },
+  { "startWord": "지하철", "targetWord": "교통카드" },
+  { "startWord": "축구", "targetWord": "골대" },
+  { "startWord": "영화관", "targetWord": "팝콘" },
+  { "startWord": "우체국", "targetWord": "우표" },
+  { "startWord": "놀이공원", "targetWord": "롤러코스터" },
+  { "startWord": "크리스마스", "targetWord": "루돌프" },
+  { "startWord": "미술관", "targetWord": "붓" },
+  { "startWord": "수영장", "targetWord": "물안경" },
+  { "startWord": "편의점", "targetWord": "삼각김밥" }
+]

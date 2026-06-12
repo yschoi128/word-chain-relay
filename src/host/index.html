@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>연상 체인 릴레이 — 호스트 스크린</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f0f23; color: #eee; min-height: 100vh; padding: 24px; }
+    h1 { font-size: 2rem; text-align: center; margin-bottom: 16px; }
+    h2 { font-size: 1.4rem; margin-bottom: 12px; color: #a5b4fc; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .qr-area { text-align: center; margin-bottom: 24px; }
+    .qr-area img { border-radius: 12px; }
+    .player-count { font-size: 1.8rem; text-align: center; color: #fbbf24; margin-bottom: 16px; }
+    .teams-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .team-card { background: #1e293b; border-radius: 12px; padding: 12px; }
+    .team-card h3 { color: #e94560; margin-bottom: 6px; }
+    .chain-list { margin-bottom: 24px; }
+    .chain-item { background: #1e293b; border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .chain-item .team-label { font-weight: bold; color: #e94560; min-width: 50px; }
+    .chain-item .word { background: #334155; padding: 4px 10px; border-radius: 6px; }
+    .chain-item .word.correct { background: #166534; color: #4ade80; }
+    .chain-item .word.arrow::before { content: '→'; margin-right: 4px; color: #888; }
+    .scoreboard { width: 100%; border-collapse: collapse; }
+    .scoreboard th, .scoreboard td { padding: 8px 16px; text-align: left; border-bottom: 1px solid #333; }
+    .scoreboard tr:nth-child(1) td { color: #fbbf24; font-weight: bold; font-size: 1.2rem; }
+    .round-info { text-align: center; font-size: 1.5rem; color: #a5b4fc; margin-bottom: 16px; }
+    .hidden { display: none; }
+    .final-champion { text-align: center; font-size: 2.5rem; margin: 24px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Global info bar (visible across sections) -->
+    <p id="global-player-count" style="position:fixed;top:8px;right:16px;color:#888;font-size:0.85rem;"></p>
+
+    <!-- Lobby -->
+    <div id="section-lobby">
+      <h1>🔗 연상 체인 릴레이</h1>
+      <div class="qr-area" id="qr-area"></div>
+      <p class="player-count" id="player-count">0명 접속</p>
+      <div id="player-names" style="text-align:center; color:#888;"></div>
+    </div>
+
+    <!-- Teams -->
+    <div id="section-teams" class="hidden">
+      <h2>팀 편성</h2>
+      <div class="teams-grid" id="teams-grid"></div>
+    </div>
+
+    <!-- Round active -->
+    <div id="section-round" class="hidden">
+      <p class="round-info" id="round-info">라운드 진행 중...</p>
+      <p id="round-progress" style="text-align:center; color:#888; font-size:1.1rem;"></p>
+    </div>
+
+    <!-- Round result: chain -->
+    <div id="section-chain" class="hidden">
+      <h2 id="chain-title">연상 체인</h2>
+      <div class="chain-list" id="chain-list"></div>
+    </div>
+
+    <!-- Scoreboard -->
+    <div id="section-scoreboard" class="hidden">
+      <h2>스코어보드</h2>
+      <table class="scoreboard" id="scoreboard-table">
+        <thead><tr><th>순위</th><th>팀</th><th>이번 라운드</th><th>누적</th></tr></thead>
+        <tbody id="scoreboard-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Final -->
+    <div id="section-final" class="hidden">
+      <h1>🏆 최종 결과</h1>
+      <div class="final-champion" id="final-champion"></div>
+      <table class="scoreboard" id="final-table">
+        <thead><tr><th>순위</th><th>팀</th><th>점수</th></tr></thead>
+        <tbody id="final-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>
