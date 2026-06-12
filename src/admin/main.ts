@@ -36,6 +36,13 @@ $('btn-assign').addEventListener('click', async () => {
   else log(`팀 배정 실패: ${data.error}`);
 });
 
+$('btn-reset').addEventListener('click', async () => {
+  if (!confirm('게임을 초기화할까요? 모든 플레이어와 점수가 사라집니다.')) return;
+  const res = await fetch('/api/admin/reset', { method: 'POST' });
+  const data = await res.json();
+  if (data.success) log('🔄 게임 초기화 완료');
+});
+
 $('btn-start-round').addEventListener('click', async () => {
   const res = await fetch('/api/admin/start-round', { method: 'POST' });
   const data = await res.json();

@@ -4,6 +4,7 @@ import {
   doStartRound,
   doEndRound,
   doShowResult,
+  doReset,
   previewNextQuestion,
   replaceNextQuestion,
   addManualQuestion,
@@ -26,6 +27,11 @@ router.post('/start-round', (_req, res) => {
 router.post('/end-round', (_req, res) => {
   const result = doEndRound();
   res.json(result);
+});
+
+router.post('/reset', (_req, res) => {
+  doReset();
+  res.json({ success: true });
 });
 
 router.post('/show-result', (req, res) => {

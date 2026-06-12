@@ -1,6 +1,6 @@
 import { WebSocket } from 'ws';
 import { GamePhase, Team, Question, RoundState, WSMessage, RoundGuess, RoundResultEntry } from '../src/shared/types.js';
-import { getAllPlayers, getPlayer } from './players.js';
+import { getAllPlayers, getPlayer, resetPlayers } from './players.js';
 import { assignTeams, shuffle } from './teams.js';
 import { createRoundState, getTurnOrder, checkAnswer, calculateScore, isRoundComplete, getRoundResults, TURN_TIME_MS, GRACE_MS, MAX_TURNS, TOTAL_ROUNDS } from './rounds.js';
 import { readFileSync } from 'fs';
@@ -440,6 +440,20 @@ function showFinalResult() {
 
   broadcastAll({ type: 'phaseChange', phase });
   broadcastAll({ type: 'finalResult', ranking });
+}
+
+// --- Reset ---
+export function doReset() {
+  for (const timer of turnTimers.values()) clearTimeout(timer);
+  turnTimers.clear();
+  phase = 'lobby';
+  teams = [];
+  roundState = null;
+  currentRoundIndex = 0;
+  gameQuestions = { manual: [], pool: [], selected: [] };
+  lastRoundResults = null;
+  resetPlayers();
+  broadcastAll({ type: 'phaseChange', phase });
 }
 
 // --- Player guess ---
