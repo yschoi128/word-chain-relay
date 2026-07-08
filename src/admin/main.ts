@@ -86,6 +86,14 @@ $('btn-show-score').addEventListener('click', async () => {
   log('호스트: 스코어보드');
 });
 
+$('btn-final').addEventListener('click', async () => {
+  if (!confirm('최종 결과(우승팀)를 발표할까요? 호스트 화면에 순위가 표시됩니다.')) return;
+  const res = await fetch('/api/admin/final-result', { method: 'POST' });
+  const data = await res.json();
+  if (data.success) log('🏆 최종 결과 발표');
+  else log(`최종 결과 실패: ${data.error}`);
+});
+
 $('btn-preview').addEventListener('click', async () => {
   const res = await fetch('/api/admin/preview-question');
   const data = await res.json();

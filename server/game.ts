@@ -461,6 +461,22 @@ function showFinalResult() {
   broadcastAll({ type: 'finalResult', ranking });
 }
 
+/**
+ * 운영자가 최종 결과(우승팀 발표)를 띄운다.
+ * 마지막 라운드까지 끝난 뒤 호스트 화면에 순위/우승팀 세리머니를 표시하는 용도.
+ * 팀이 배정된 상태면 언제든 호출 가능(현재까지 누적 점수 기준).
+ */
+export function doShowFinalResult(): { success: boolean; error?: string } {
+  if (teams.length === 0) {
+    return { success: false, error: '팀이 배정되지 않았습니다' };
+  }
+  // 진행 중 라운드가 있으면 타이머 정리 후 결과 표시
+  for (const timer of turnTimers.values()) clearTimeout(timer);
+  turnTimers.clear();
+  showFinalResult();
+  return { success: true };
+}
+
 // --- Reset ---
 export function doReset() {
   for (const timer of turnTimers.values()) clearTimeout(timer);

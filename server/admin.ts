@@ -11,6 +11,7 @@ import {
   removeManualQuestion,
   getManualQuestions,
   getTeamRoster,
+  doShowFinalResult,
 } from './game.js';
 
 const router = Router();
@@ -73,6 +74,11 @@ router.get('/manual-questions', (_req, res) => {
 
 router.get('/teams', (_req, res) => {
   res.json({ teams: getTeamRoster() });
+});
+
+router.post('/final-result', (_req, res) => {
+  const result = doShowFinalResult();
+  res.json(result);
 });
 
 export default router;
