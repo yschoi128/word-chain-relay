@@ -22,6 +22,18 @@ function connectWS() {
       log(`팀 ${msg.teamId} 라운드 완료: +${msg.score}점`);
     } else if (msg.type === 'roundResult') {
       log(`라운드 결과 수신 (${msg.results.length}팀)`);
+    } else if (msg.type === 'teamAssigned') {
+      // 팀 배정 브로드캐스트 → 명단 갱신
+      const roster = msg.teams.map((t) => ({
+        id: t.id,
+        members: t.playerIds.map((pid, i) => ({
+          nickname: msg.nicknameMap[pid] ?? '(?)',
+          orderInTeam: i,
+          left: false,
+        })),
+      }));
+      renderTeams(roster);
+      log(`팀 배정 완료 (${roster.length}팀)`);
     }
   };
   ws.onclose = () => setTimeout(connectWS, 2000);
@@ -144,3 +156,61 @@ function renderManualList(questions: { startWord: string; targetWord: string }[]
 }
 
 loadManualQuestions();
+
+// --- 팀 명단 ---
+type RosterMember = { nickname: string; orderInTeam: number; left: boolean };
+type RosterTeam = { id: number; members: RosterMember[] };
+
+function renderTeams(teams: RosterTeam[]) {
+  const view = $('teams-view');
+  const summary = $('teams-summary');
+  if (!teams.length) {
+    view.innerHTML =
+      '<p style="color:#888;font-size:0.9rem;">팀 배정 후 팀원 명단이 여기에 표시됩니다.</p>';
+    summary.textContent = '';
+    return;
+  }
+  const total = teams.reduce((n, t) => n + t.members.length, 0);
+  summary.textContent = `· ${teams.length}팀 / ${total}명`;
+  view.innerHTML = '';
+  for (const t of teams) {
+    const box = document.createElement('div');
+    box.className = 'team-box';
+    const items = t.members
+      .map((m) => `<li class="${m.left ? 'left' : ''}">${escapeHtml(m.nickname)}</li>`)
+      .join('');
+    box.innerHTML = `<h3>팀 ${t.id} <span class="cnt">${t.members.length}명</span></h3><ol>${items}</ol>`;
+    view.appendChild(box);
+  }
+}
+
+function escapeHtml(s: string): string {
+  return s.replace(
+    /[&<>"']/g,
+    (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!,
+  );
+}
+
+async function loadTeams() {
+  const res = await fetch('/api/admin/teams');
+  const data = await res.json();
+  const teams: RosterTeam[] = (data.teams ?? []).map(
+    (t: { id: number; members: { nickname: string; orderInTeam: number }[] }) => ({
+      id: t.id,
+      members: t.members.map((m) => ({
+        nickname: m.nickname,
+        orderInTeam: m.orderInTeam,
+        left: m.nickname === '(퇴장)',
+      })),
+    }),
+  );
+  renderTeams(teams);
+}
+
+$('btn-teams').addEventListener('click', () => {
+  loadTeams();
+  log('팀 명단 새로고침');
+});
+
+// 페이지 로드 시 이미 배정된 팀이 있으면 표시 (관리자 새로고침 대비)
+loadTeams();

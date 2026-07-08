@@ -10,6 +10,7 @@ import {
   addManualQuestion,
   removeManualQuestion,
   getManualQuestions,
+  getTeamRoster,
 } from './game.js';
 
 const router = Router();
@@ -68,6 +69,10 @@ router.post('/remove-question', (req, res) => {
 
 router.get('/manual-questions', (_req, res) => {
   res.json({ questions: getManualQuestions() });
+});
+
+router.get('/teams', (_req, res) => {
+  res.json({ teams: getTeamRoster() });
 });
 
 export default router;

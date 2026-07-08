@@ -112,6 +112,25 @@ export function getTeams(): Team[] {
   return teams;
 }
 
+/**
+ * 팀별 팀원 명단(닉네임 포함)을 반환한다.
+ * 관리자 화면에서 시상 대상자를 확인하는 용도.
+ * 퇴장 등으로 플레이어 정보가 없으면 '(퇴장)'으로 표기.
+ */
+export function getTeamRoster(): {
+  id: number;
+  members: { id: string; nickname: string; orderInTeam: number }[];
+}[] {
+  return teams.map(t => ({
+    id: t.id,
+    members: t.playerIds.map((pid, i) => ({
+      id: pid,
+      nickname: getPlayer(pid)?.nickname ?? '(퇴장)',
+      orderInTeam: i,
+    })),
+  }));
+}
+
 export function notifyPlayerJoined() {
   const players = getAllPlayers();
   broadcastAll({ type: 'playerCount', count: players.length, nicknames: players.map(p => p.nickname) });

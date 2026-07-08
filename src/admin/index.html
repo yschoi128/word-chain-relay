@@ -22,6 +22,13 @@
     .question-list li { padding: 6px 0; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
     .preview { background: #334155; border-radius: 8px; padding: 12px; margin: 8px 0; }
     .log { background: #0f0f23; border-radius: 8px; padding: 12px; max-height: 200px; overflow-y: auto; font-size: 0.85rem; color: #888; margin-top: 12px; }
+    .teams-view { margin-top: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+    .team-box { background: #0f0f23; border: 1px solid #334155; border-radius: 8px; padding: 10px 12px; }
+    .team-box h3 { font-size: 1rem; color: #4ade80; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: baseline; }
+    .team-box .cnt { font-size: 0.8rem; color: #888; font-weight: normal; }
+    .team-box ol { margin: 0; padding-left: 18px; }
+    .team-box li { padding: 2px 0; font-size: 0.95rem; }
+    .team-box li.left { color: #ef4444; text-decoration: line-through; }
   </style>
 </head>
 <body>
@@ -37,6 +44,14 @@
       <h2>팀 배정</h2>
       <button class="btn-primary" id="btn-assign">팀 배정</button>
       <button class="btn-danger" id="btn-reset">초기화</button>
+    </div>
+
+    <div class="card">
+      <h2>팀 명단 <span id="teams-summary" style="font-size:0.9rem;color:#888;font-weight:normal;"></span></h2>
+      <button class="btn-secondary" id="btn-teams">명단 새로고침</button>
+      <div class="teams-view" id="teams-view">
+        <p style="color:#888;font-size:0.9rem;">팀 배정 후 팀원 명단이 여기에 표시됩니다.</p>
+      </div>
     </div>
 
     <div class="card">
