@@ -94,6 +94,14 @@ $('btn-final').addEventListener('click', async () => {
   else log(`최종 결과 실패: ${data.error}`);
 });
 
+$('btn-restart').addEventListener('click', async () => {
+  if (!confirm('같은 팀 그대로 점수만 초기화하고 다시 시작할까요? (팀·참가자 유지, 재접속 불필요)')) return;
+  const res = await fetch('/api/admin/restart-keep-teams', { method: 'POST' });
+  const data = await res.json();
+  if (data.success) log('🔁 같은 팀으로 재시작 (점수 초기화). 라운드 시작을 누르세요.');
+  else log(`재시작 실패: ${data.error}`);
+});
+
 $('btn-preview').addEventListener('click', async () => {
   const res = await fetch('/api/admin/preview-question');
   const data = await res.json();

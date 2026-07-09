@@ -5,6 +5,7 @@ import {
   doEndRound,
   doShowResult,
   doReset,
+  restartKeepTeams,
   previewNextQuestion,
   replaceNextQuestion,
   addManualQuestion,
@@ -34,6 +35,11 @@ router.post('/end-round', (_req, res) => {
 router.post('/reset', (_req, res) => {
   doReset();
   res.json({ success: true });
+});
+
+router.post('/restart-keep-teams', (_req, res) => {
+  const result = restartKeepTeams();
+  res.json(result);
 });
 
 router.post('/show-result', (req, res) => {

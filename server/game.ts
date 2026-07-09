@@ -23,6 +23,11 @@ interface GameQuestions {
 }
 let gameQuestions: GameQuestions = { manual: [], pool: [], selected: [] };
 
+// 같은 팀 재시작(restartKeepTeams) 간에 유지되는, 이미 사용한 문제 키 집합.
+// 전체 초기화(doReset)에서만 비운다. 20문제/10라운드이므로 2게임까지 무중복.
+const usedQuestionKeys = new Set<string>();
+const qKey = (q: Question) => `${q.startWord}\u0000${q.targetWord}`;
+
 // Last round results (for doShowResult('chain') re-broadcast)
 let lastRoundResults: RoundResultEntry[] | null = null;
 
@@ -216,7 +221,10 @@ export function doAssignTeams(): { success: boolean; error?: string } {
 function initQuestions() {
   const raw = readFileSync(join(__dirname, '../data/questions.json'), 'utf-8');
   const allQuestions: Question[] = JSON.parse(raw);
-  const pool = shuffle([...allQuestions]);
+  // 이전 게임에서 쓴 문제는 뒤로 미뤄 새 문제를 우선 선택(같은 팀 재게임 시 중복 최소화).
+  const unused = shuffle(allQuestions.filter(q => !usedQuestionKeys.has(qKey(q))));
+  const used = shuffle(allQuestions.filter(q => usedQuestionKeys.has(qKey(q))));
+  const pool = [...unused, ...used];
 
   const manualCount = gameQuestions.manual.length;
   const needed = TOTAL_ROUNDS - manualCount;
@@ -261,6 +269,7 @@ export function doStartRound(): { success: boolean; error?: string } {
 
   const question = gameQuestions.selected[currentRoundIndex];
   if (!question) return { success: false, error: '문제가 없습니다' };
+  usedQuestionKeys.add(qKey(question));
 
   roundState = createRoundState(currentRoundIndex, question, teams);
   phase = 'roundActive';
@@ -487,8 +496,47 @@ export function doReset() {
   currentRoundIndex = 0;
   gameQuestions = { manual: [], pool: [], selected: [] };
   lastRoundResults = null;
+  usedQuestionKeys.clear();
   resetPlayers();
   broadcastAll({ type: 'phaseChange', phase });
+}
+
+// --- Restart keeping the same teams (scores reset only) ---
+// 팀/참가자는 그대로 두고 점수·라운드·진행상황만 초기화해 teamAssigned 단계로 복귀한다.
+// 문제는 새로 선택하되 이전 게임에서 쓴 문제는 최대한 제외(usedQuestionKeys 유지).
+export function restartKeepTeams(): { success: boolean; error?: string } {
+  if (teams.length === 0) return { success: false, error: '팀이 배정되지 않았습니다' };
+
+  for (const timer of turnTimers.values()) clearTimeout(timer);
+  turnTimers.clear();
+
+  for (const team of teams) team.scores = [];
+  roundState = null;
+  currentRoundIndex = 0;
+  lastRoundResults = null;
+  initQuestions(); // 새 문제 세트 (이미 쓴 문제는 뒤로)
+  phase = 'teamAssigned';
+
+  const players = getAllPlayers();
+  const nicknameMap: Record<string, string> = {};
+  for (const p of players) nicknameMap[p.id] = p.nickname;
+
+  broadcastAll({ type: 'phaseChange', phase });
+  // 각 플레이어 화면을 팀 배정 상태로 되돌린다(재접속 불필요).
+  for (const player of players) {
+    if (player.teamId !== null && player.orderInTeam !== null) {
+      sendToPlayer(player.id, {
+        type: 'teamAssigned',
+        teams,
+        myTeamId: player.teamId,
+        myOrder: player.orderInTeam,
+        nicknameMap,
+      });
+    }
+  }
+  broadcast({ type: 'teamAssigned', teams, myTeamId: 0, myOrder: 0, nicknameMap });
+
+  return { success: true };
 }
 
 // --- Player guess ---

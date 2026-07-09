@@ -132,8 +132,16 @@ function showScoreboard(scoreData: { teamId: number; totalScore: number; roundSc
 
 function showFinal(ranking: { teamId: number; totalScore: number; rank: number }[]) {
   showOnly('section-final');
-  const champion = ranking[0];
-  $('final-champion').textContent = champion ? `🥇 ${champion.teamId}팀 — ${champion.totalScore}점` : '';
+  // 1위가 여러 팀이면(공동 우승) 모두 표시한다.
+  const winners = ranking.filter(r => r.rank === 1);
+  const topScore = winners[0]?.totalScore ?? 0;
+  if (winners.length === 0) {
+    $('final-champion').textContent = '';
+  } else if (winners.length === 1) {
+    $('final-champion').textContent = `🥇 ${winners[0].teamId}팀 — ${topScore}점`;
+  } else {
+    $('final-champion').textContent = `🥇 공동 우승 (${winners.length}팀): ${winners.map(w => `${w.teamId}팀`).join(', ')} — ${topScore}점`;
+  }
   const body = $('final-body');
   body.innerHTML = '';
   for (const r of ranking) {
