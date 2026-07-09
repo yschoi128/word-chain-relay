@@ -15,18 +15,16 @@ let totalTeamCount = 0;
 // QR code
 async function showQR() {
   const playerUrl = `${location.origin}/player/`;
-  $('qr-area').innerHTML = `<p style="font-size:1.2rem;word-break:break-all;color:#a5b4fc;">${playerUrl}</p>`;
+  $('qr-area').innerHTML = `<p style="font-size:1.1rem;color:#a5b4fc;">QR 코드를 스캔해 접속하세요</p>`;
   try {
     const canvas = document.createElement('canvas');
     await QRCode.toCanvas(canvas, playerUrl, { width: 200, margin: 2 });
     $('qr-area').innerHTML = '';
     $('qr-area').appendChild(canvas);
-    const urlP = document.createElement('p');
-    urlP.style.cssText = 'margin-top:8px;font-size:0.9rem;color:#888;';
-    urlP.textContent = playerUrl;
-    $('qr-area').appendChild(urlP);
+    // 주소 텍스트는 표시하지 않음(참가자가 주소로 admin 등에 접근하는 것 방지). QR만 노출.
   } catch {
-    // fallback: just URL text
+    // QR 생성 실패 시에만 접속 주소를 폴백으로 노출
+    $('qr-area').innerHTML = `<p style="font-size:1rem;color:#a5b4fc;word-break:break-all;">${playerUrl}</p>`;
   }
 }
 showQR();
