@@ -235,7 +235,16 @@ function initQuestions() {
 }
 
 export function addManualQuestion(q: Question) {
-  gameQuestions.manual.push(q);
+  // 게임이 이미 시작(문제 세트 구성)된 상태면, 수동 문제를 '바로 다음 라운드' 문제로
+  // 한 번만 끼워 넣는다. (진행 중 라운드가 있으면 그 다음 라운드에 배치)
+  if (phase !== 'lobby' && gameQuestions.selected.length > 0) {
+    const nextIndex = phase === 'roundActive' ? currentRoundIndex + 1 : currentRoundIndex;
+    const idx = Math.min(Math.max(nextIndex, 0), gameQuestions.selected.length);
+    gameQuestions.selected.splice(idx, 0, q);
+  } else {
+    // 게임 시작 전(로비): 목록에 추가 → 팀 배정 시 앞쪽 라운드로 배치됨
+    gameQuestions.manual.push(q);
+  }
 }
 
 export function removeManualQuestion(index: number) {

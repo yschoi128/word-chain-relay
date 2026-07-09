@@ -95,7 +95,7 @@ function showTeams() {
   }
 }
 
-function showChain(results: { teamId: number; guesses: { word: string; correct: boolean }[]; score: number; targetWord: string }[]) {
+function showChain(results: { teamId: number; guesses: { playerId?: string; word: string; correct: boolean }[]; score: number; targetWord: string }[]) {
   showOnly('section-chain');
   $('chain-title').textContent = `정답: ${results[0]?.targetWord ?? ''}`;
   const list = $('chain-list');
@@ -104,15 +104,20 @@ function showChain(results: { teamId: number; guesses: { word: string; correct: 
     const div = document.createElement('div');
     div.className = 'chain-item';
     let html = `<span class="team-label">${r.teamId}팀</span>`;
+    let solver = '';
     for (const g of r.guesses) {
+      const who = g.playerId ? (nicknameMap[g.playerId] ?? '') : '';
+      const name = who ? `<span style="color:#94a3b8;font-size:0.8em;">${who}</span> ` : '';
       if (g.word === '') {
-        html += `<span class="word arrow" style="color:#888;">(패스)</span>`;
+        html += `<span class="word arrow" style="color:#888;">${name}(패스)</span>`;
       } else if (g.correct) {
-        html += `<span class="word arrow correct">${g.word} ✅</span>`;
+        html += `<span class="word arrow correct">${name}${g.word} ✅</span>`;
+        solver = who;
       } else {
-        html += `<span class="word arrow">${g.word}</span>`;
+        html += `<span class="word arrow">${name}${g.word}</span>`;
       }
     }
+    if (solver) html += `<span style="margin-left:8px;color:#4ade80;font-weight:bold;">🎯 ${solver}</span>`;
     html += `<span style="margin-left:auto;font-weight:bold;color:#fbbf24;">+${r.score}</span>`;
     div.innerHTML = html;
     list.appendChild(div);

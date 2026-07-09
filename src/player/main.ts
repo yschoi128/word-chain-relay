@@ -120,15 +120,16 @@ function updateTurn(turnIndex: number, guesses: RoundGuess[], timerStart: number
   const list = $('hint-list');
   list.innerHTML = '';
   for (const g of guesses) {
+    const who = nicknameMap[g.playerId] ?? `${g.turnIndex + 1}번`;
     const li = document.createElement('li');
     if (g.word === '') {
-      li.textContent = `${g.turnIndex + 1}번: (시간초과)`;
+      li.textContent = `${who}: (시간초과)`;
       li.className = 'timeout';
     } else if (g.correct) {
-      li.textContent = `${g.turnIndex + 1}번: ${g.word} ✅`;
+      li.textContent = `${who}: ${g.word} ✅`;
       li.className = 'correct';
     } else {
-      li.textContent = `${g.turnIndex + 1}번: ${g.word}`;
+      li.textContent = `${who}: ${g.word}`;
     }
     list.appendChild(li);
   }
@@ -195,7 +196,11 @@ function showRoundResultDetails(results: { teamId: number; guesses: RoundGuess[]
   const myResult = results.find(r => r.teamId === myTeamId);
   if (myResult) {
     $('result-answer').textContent = `정답: ${myResult.targetWord}`;
-    $('result-score').textContent = myResult.score > 0 ? `+${myResult.score}점!` : '0점...';
+    const correct = myResult.guesses.find(g => g.correct);
+    const solver = correct ? (nicknameMap[correct.playerId] ?? '') : '';
+    $('result-score').textContent = myResult.score > 0
+      ? `+${myResult.score}점!${solver ? ` (맞힌 사람: ${solver})` : ''}`
+      : '0점...';
   }
   const team = teams.find(t => t.id === myTeamId);
   if (team) {
