@@ -28,6 +28,9 @@
     .round-info { text-align: center; font-size: 1.5rem; color: #a5b4fc; margin-bottom: 16px; }
     .hidden { display: none; }
     .final-champion { text-align: center; font-size: 2.5rem; margin: 24px 0; }
+    .rules-box { max-width: 640px; margin: 28px auto 0; background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px 24px; }
+    .rules-box p { font-size: 1.25rem; line-height: 1.9; color: #cbd5e1; }
+    .rules-box b { color: #fbbf24; }
   </style>
 </head>
 <body>
@@ -41,6 +44,11 @@
       <div class="qr-area" id="qr-area"></div>
       <p class="player-count" id="player-count">0명 접속</p>
       <div id="player-names" style="text-align:center; color:#888;"></div>
+      <div class="rules-box">
+        <p>👥 <b>팀 대항!</b> 출발어를 보고 <b>목표 단어</b>를 팀원이 <b>15초씩 릴레이</b>로 추리</p>
+        <p>⚡ <b>빨리 맞힐수록 고득점</b> — 1번째 5점 · 2번째 4점 … 5번째 1점</p>
+        <p>🏆 총 <b>10라운드</b> 누적 점수로 우승팀 결정</p>
+      </div>
     </div>
 
     <!-- Teams -->
